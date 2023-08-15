@@ -1,6 +1,7 @@
 package DataBaseConnection.demo.Task;
 
 import DataBaseConnection.demo.Employee.Employee;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -19,5 +20,6 @@ public class Task {
 
     @ManyToOne  // by using OneToMany and ManyToOne, we are creating a bidirectional relationship. Meaning both classes can reference the other
     @JoinColumn(name = "employee_id")
+    @JsonIgnore
     private Employee employee;
 }
