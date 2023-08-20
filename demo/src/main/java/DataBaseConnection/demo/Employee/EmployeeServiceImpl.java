@@ -43,16 +43,18 @@ public class EmployeeServiceImpl implements EmployeeService, UserDetailsService 
 
     }
 
-    @Override
-    public Employee getEmployee(String email) {
-        log.info("Getting employee " + email);
-        return employeeRepo.findByEmail(email);
-    }
+
 
     @Override
     public List<Employee> getEmployees() {
         log.info("Fetching all employees");
         return employeeRepo.findAll();
+    }
+
+    @Override
+    public Employee getEmployee(String email) {
+        log.info("Fetching employee");
+        return employeeRepo.findByEmail(email);
     }
 
     @Override

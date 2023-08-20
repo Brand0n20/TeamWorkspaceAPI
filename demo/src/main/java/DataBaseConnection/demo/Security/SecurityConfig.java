@@ -58,7 +58,7 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.csrf(csrf -> csrf.disable());
         http.sessionManagement(sessionManagement -> sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
-        http.authorizeHttpRequests(auth -> auth.requestMatchers("/login").permitAll());
+        http.authorizeHttpRequests(auth -> auth.requestMatchers("/login/**", "/token/refresh/**").permitAll());
         http.authorizeHttpRequests(auth -> auth.requestMatchers(GET, "/tasks/**").hasAuthority("ROLE_USER"));
         // we're passing the authorization filter as the first filter, and we want to specify that it's for the UsernamePasswordAuthenticationFilter claass
         http.addFilter(new CustomAuthenticationFilter(authenticationManager(http.getSharedObject(AuthenticationConfiguration.class))));

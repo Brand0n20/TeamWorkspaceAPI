@@ -30,7 +30,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 public class CustomAuthorizationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        if (request.getServletPath().equals("/login")) {
+        if (request.getServletPath().equals("/login") || request.getServletPath().equals("/token/refresh")) {
             // we won't do anything and let the request go through if it's the login page
             filterChain.doFilter(request, response);
         } else {
