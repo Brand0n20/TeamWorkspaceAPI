@@ -30,8 +30,10 @@ import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.HttpStatus.FORBIDDEN;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
+@CrossOrigin(origins = "http://localhost:3000")
 @RestController
 @Slf4j
+@RequestMapping("/employees")
 public class EmployeeController {
 
     @Autowired
@@ -40,15 +42,21 @@ public class EmployeeController {
     @Autowired
     EmployeeServiceImpl employeeService;
 
-    @PostMapping("/addEmployee")
-    public void addEmployee(@RequestBody Employee employee) {
-        employeeRepo.save(employee);
+    @GetMapping
+    public ResponseEntity<List<Employee>> getEmployees() {
+        return new ResponseEntity<>(employeeService.getEmployees(), HttpStatus.OK);
     }
 
-    @GetMapping("/employee/{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<Employee> refreshToken(@PathVariable String email) {
         return new ResponseEntity<>(employeeService.getEmployee(email), HttpStatus.OK);
     }
+
+    @PostMapping("/addEmployee")
+    public void addEmployee(@RequestBody Employee employee) {
+        employeeService.saveEmployee(employee);
+    }
+
 
     /* @GetMapping("/token/refresh")
     public void refreshToken(HttpServletRequest request, HttpServletResponse response) throws IOException {

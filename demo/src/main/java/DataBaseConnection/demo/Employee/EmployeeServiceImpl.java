@@ -43,8 +43,6 @@ public class EmployeeServiceImpl implements EmployeeService, UserDetailsService 
 
     }
 
-
-
     @Override
     public List<Employee> getEmployees() {
         log.info("Fetching all employees");
