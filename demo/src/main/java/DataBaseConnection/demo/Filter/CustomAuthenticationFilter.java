@@ -1,11 +1,14 @@
 package DataBaseConnection.demo.Filter;
 
+import DataBaseConnection.demo.Employee.Employee;
+import DataBaseConnection.demo.Employee.EmployeeRepo;
 import DataBaseConnection.demo.Security.JwtUtil;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
@@ -19,6 +22,7 @@ import java.io.IOException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
@@ -27,11 +31,14 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
 
     private final AuthenticationManager authenticationManager;
 
+    private EmployeeRepo employeeRepo;
+
     private JwtUtil jwtUtil;
 
-    public CustomAuthenticationFilter(AuthenticationManager authenticationManager, JwtUtil jwtUtil) {
+    public CustomAuthenticationFilter(AuthenticationManager authenticationManager, JwtUtil jwtUtil, EmployeeRepo employeeRepo) {
         this.authenticationManager = authenticationManager;
         this.jwtUtil = jwtUtil;
+        this.employeeRepo = employeeRepo;
     }
 
     @Override
@@ -56,27 +63,26 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
         userMap.put("username", user.getUsername());
         userMap.put("roles", user.getAuthorities());
         String access_token = jwtUtil.generateToken(authentication);
+        Cookie jwtCookie = new Cookie("jwtToken", access_token);
+        jwtCookie.setHttpOnly(true);
+        jwtCookie.setPath("/");
         // use an algorithm to sign the jwt (access & refresh)
         Algorithm algorithm = Algorithm.HMAC256("secret".getBytes());   // algorithm used to sign token
 
 
-        String refresh_token = JWT.create().withSubject(user.getUsername()).
-                withExpiresAt(new Date(System.currentTimeMillis() + 60 * 60 * 1000))
-                .withIssuer(request.getRequestURL().toString())
-                .sign(algorithm);   // we don't need roles for the refresh token */
-
-        // Use this HashMap if you want to include the user info as part of response
-        Map<String, Object> responseJson = new HashMap<>();
-        responseJson.put("access_token", access_token);
-        responseJson.put("refresh_token", refresh_token);
-        responseJson.put("user", userMap);
+        response.addCookie(jwtCookie);
 
         // when user sends request, these should be part of the header
-        Map<String, String> tokens = new HashMap<>();
-        tokens.put("access_token", access_token);
-        tokens.put("refresh_token", refresh_token);
+        Map<String, String> responseBody = new HashMap<>();
+        responseBody.put("access_token", access_token);
+        //responseBody.put("refresh_token", refresh_token);
+        responseBody.put("email", user.getUsername());
+        String employeeName = Optional.ofNullable(employeeRepo.findByEmail(user.getUsername())).map(Employee::getName).orElse("Employee not found");
+        responseBody.put("employee_name", employeeName);
         response.setContentType(APPLICATION_JSON_VALUE);
-        new ObjectMapper().writeValue(response.getOutputStream(), responseJson); // ObjectMapper provides functionality for reading and writing JSON
+        response.getWriter().write(new ObjectMapper().writeValueAsString(responseBody));
+        // new ObjectMapper().writeValue(response.getOutputStream(), jwtCookie); // ObjectMapper provides functionality for reading and writing JSON
+
     }
 
 }

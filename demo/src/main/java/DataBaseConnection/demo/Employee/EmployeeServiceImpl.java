@@ -22,7 +22,6 @@ import java.util.List;
 @Slf4j
 public class EmployeeServiceImpl implements EmployeeService, UserDetailsService {
 
-
     @Autowired
     private final EmployeeRepo employeeRepo;
 

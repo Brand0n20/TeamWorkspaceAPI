@@ -21,8 +21,8 @@ public class Config {
     CommandLineRunner runEmployee(EmployeeService employeeService) {
         return args -> {
 
-            Role role1 = new Role(null, "ROLE_USER");
-            Role role2 = new Role(null, "ROLE_ADMIN");
+            Role role1 = new Role(1L, "USER");
+            Role role2 = new Role(2L, "ADMIN");
 
 
             // Since you're saving an employee that references a role that hasn't been saved to the database, you need to add CascadeType.ALL to the Role property in the Employee Class
