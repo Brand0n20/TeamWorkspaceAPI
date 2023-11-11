@@ -8,5 +8,12 @@ public interface TaskService {
 
     Task getTaskById(Long id);
 
+    List<Task> getTasksByEmployeeEmail(String email);
+
     Task saveTask(Task task);
+
+    Task updateTask(String email, Task task);
+
+    void deleteTask(String email, Long id);
+
 }

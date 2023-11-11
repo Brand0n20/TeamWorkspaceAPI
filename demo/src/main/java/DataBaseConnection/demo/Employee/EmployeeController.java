@@ -14,6 +14,7 @@ import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -36,8 +37,6 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 @RequestMapping("/employees")
 public class EmployeeController {
 
-    @Autowired
-    EmployeeRepo employeeRepo;
 
     @Autowired
     EmployeeServiceImpl employeeService;
@@ -47,15 +46,27 @@ public class EmployeeController {
         return new ResponseEntity<>(employeeService.getEmployees(), HttpStatus.OK);
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<Employee> refreshToken(@PathVariable String email) {
+    @GetMapping("/{email}")
+    public ResponseEntity<Employee> getEmployee(@PathVariable String email) {
         return new ResponseEntity<>(employeeService.getEmployee(email), HttpStatus.OK);
     }
 
-    @PostMapping("/addEmployee")
-    public void addEmployee(@RequestBody Employee employee) {
-        employeeService.saveEmployee(employee);
+    @PostMapping
+    public  ResponseEntity<Employee> saveEmployee(@RequestBody Employee employee) {
+        return new ResponseEntity<>(employeeService.saveEmployee(employee), HttpStatus.CREATED);
     }
+
+    @PutMapping("/{email}")
+    public ResponseEntity<Employee> updateEmployee(@PathVariable String email, @RequestBody Employee employee) {
+        return new ResponseEntity<>(employeeService.updateEmployee(email, employee), HttpStatus.OK);
+    }
+
+    @DeleteMapping("/{email}")
+    public ResponseEntity<Void> deleteEmployee(@PathVariable String email) {
+        employeeService.deleteEmployee(email);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
 
 
     /* @GetMapping("/token/refresh")

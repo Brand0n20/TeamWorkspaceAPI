@@ -17,6 +17,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import java.io.IOException;
 import java.util.Date;
@@ -32,6 +33,8 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
     private final AuthenticationManager authenticationManager;
 
     private EmployeeRepo employeeRepo;
+
+    private UserDetails userDetails;
 
     private JwtUtil jwtUtil;
 
@@ -79,6 +82,7 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
         responseBody.put("email", user.getUsername());
         String employeeName = Optional.ofNullable(employeeRepo.findByEmail(user.getUsername())).map(Employee::getName).orElse("Employee not found");
         responseBody.put("employee_name", employeeName);
+        responseBody.put("roles", user.getAuthorities().toString());
         response.setContentType(APPLICATION_JSON_VALUE);
         response.getWriter().write(new ObjectMapper().writeValueAsString(responseBody));
         // new ObjectMapper().writeValue(response.getOutputStream(), jwtCookie); // ObjectMapper provides functionality for reading and writing JSON

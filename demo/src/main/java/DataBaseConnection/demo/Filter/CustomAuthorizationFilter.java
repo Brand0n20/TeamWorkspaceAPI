@@ -13,6 +13,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -62,17 +63,20 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
                         // need to add the roles as granted authorities instead of just having them as strings
                         authorities.add(new SimpleGrantedAuthority(role));
                     });
+                    log.info(authorities.toString());
                     UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(username, null, authorities);
                     // set the user and the security context holder
                     // Telling Spring Security that the current user has been authenticated and providing their details (username, granted authorities)
                     SecurityContextHolder.getContext().setAuthentication(authenticationToken);
                     filterChain.doFilter(request, response);
-                } catch (Exception exception) {
-                    log.error("Error getting secure endpoint: {}", exception.getMessage());
-                    response.setHeader("error", exception.getMessage());
+
+                } catch (AccessDeniedException e) {
+                    log.error("Error getting secure endpoint: {}", e.getMessage());
+                    response.setHeader("error", e.getMessage());
                     response.setStatus(FORBIDDEN.value());
                     Map<String, String> error = new HashMap<>();
-                    error.put("error_message", exception.getMessage());
+                    error.put("error_message", e.getMessage());
+
                     response.setContentType(APPLICATION_JSON_VALUE);
                     new ObjectMapper().writeValue(response.getOutputStream(), error);
                 }

@@ -7,4 +7,7 @@ import java.util.List;
 
 public interface TaskRepo extends JpaRepository<Task, Long> {
 
+    List<Task> findTasksByEmployeeEmail(String email);
+
+    Task findTaskByEmployeeEmail(String email);
 }

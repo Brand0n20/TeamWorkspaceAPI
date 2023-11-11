@@ -13,7 +13,6 @@ import java.util.List;
 @Entity
 @Table(name = "role")
 @NoArgsConstructor
-@AllArgsConstructor
 public class Role {
 
     @Id
@@ -22,4 +21,7 @@ public class Role {
 
     private String name;
 
+    public Role(String name) {
+        this.name = name;
+    }
 }
