@@ -51,6 +51,11 @@ public class EmployeeController {
         return new ResponseEntity<>(employeeService.getEmployee(email), HttpStatus.OK);
     }
 
+    @GetMapping("/{email}/tasks")
+    public ResponseEntity<List<Task>> getEmployeeTasks(@PathVariable String email) {
+        return new ResponseEntity<>(employeeService.getEmployeeTasks(email), HttpStatus.OK);
+    }
+
     @PostMapping
     public  ResponseEntity<Employee> saveEmployee(@RequestBody Employee employee) {
         return new ResponseEntity<>(employeeService.saveEmployee(employee), HttpStatus.CREATED);

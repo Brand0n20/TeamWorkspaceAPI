@@ -43,6 +43,7 @@ public class Config {
         return args -> {
             taskRepo.deleteAll();
             employeeRepo.deleteAll();
+            roleRepo.deleteAll();
             Role role1 = roleRepo.findByName("USER");
             Role role2 = roleRepo.findByName("ADMIN");
             if (role1 == null || role2 == null) {
@@ -53,10 +54,10 @@ public class Config {
 
 
 
-            Employee employee1 = new Employee("Brandon", "brandonalfa@", "Real", "Software Engineer", role1);
+            Employee employee1 = new Employee("Brandon Alfaro", "brandonalfa@", "Real", "Software Engineer", role1);
             employeeService.saveEmployee(employee1);
 
-            Employee employee2 = new Employee("Jacob", "MillerLite@com", "Deal", "Product Owner", role2);
+            Employee employee2 = new Employee("Jacob Miller", "MillerLite@com", "Deal", "Product Owner", role2);
             employeeService.saveEmployee(employee2);
             Employee existingEmployee = employeeService.getEmployee(employee1.getEmail());
             Employee existingEmployee2 = employeeService.getEmployee(employee2.getEmail());

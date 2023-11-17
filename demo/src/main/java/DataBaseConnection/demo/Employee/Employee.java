@@ -2,6 +2,7 @@ package DataBaseConnection.demo.Employee;
 
 import DataBaseConnection.demo.Role.Role;
 import DataBaseConnection.demo.Task.Task;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
@@ -36,6 +37,7 @@ public class Employee {
         private Role role;
 
         @OneToMany(mappedBy = "employee", cascade = CascadeType.ALL, fetch = FetchType.LAZY)       // The mappedBy property is what we use to tell Hibernate which variable we are using to represent the parent class in our child class.
+        @JsonIgnore
         private List<Task> tasks = new ArrayList<>();
 
         public Employee(String name, String email, String password, String jobTitle, Role role) {

@@ -36,14 +36,14 @@ public class TaskController {
         return new ResponseEntity<>(taskService.saveTask(task), HttpStatus.CREATED);
     }
 
-    @PutMapping("/{email}")
-    public ResponseEntity<Task> updateTask(@PathVariable String email, @RequestBody Task task) {
-        return new ResponseEntity<>(taskService.updateTask(email, task), HttpStatus.OK);
+    @PutMapping("/{id}")
+    public ResponseEntity<Task> updateTask(@PathVariable Long id, @RequestBody Task task) {
+        return new ResponseEntity<>(taskService.updateTask(id, task), HttpStatus.OK);
     }
 
-    @DeleteMapping("/{email}/{id}")
-    public ResponseEntity<Void> deleteTask(@PathVariable String email, @PathVariable Long id) {
-      taskService.deleteTask(email, id);
+    @DeleteMapping("{id}")
+    public ResponseEntity<Void> deleteTask(@PathVariable Long id) {
+      taskService.deleteTask(id);
       return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }

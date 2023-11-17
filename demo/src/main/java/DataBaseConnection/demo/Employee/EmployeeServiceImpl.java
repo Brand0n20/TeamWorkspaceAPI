@@ -2,6 +2,10 @@ package DataBaseConnection.demo.Employee;
 
 import DataBaseConnection.demo.Role.Role;
 import DataBaseConnection.demo.Role.RoleRepo;
+import DataBaseConnection.demo.Task.Task;
+import DataBaseConnection.demo.Task.TaskRepo;
+import Exceptions.BadRequest;
+import Exceptions.ResourceNotFound;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -31,6 +35,9 @@ public class EmployeeServiceImpl implements EmployeeService, UserDetailsService 
     @Autowired
     private final RoleRepo roleRepo;
 
+    @Autowired
+    private final TaskRepo taskRepo;
+
     private final PasswordEncoder passwordEncoder;
 
     @Override
@@ -42,6 +49,13 @@ public class EmployeeServiceImpl implements EmployeeService, UserDetailsService 
             throw new NoSuchElementException("No employees found");
         }
 
+    }
+
+    @Override
+    public List<Task> getEmployeeTasks(String email) {
+        Employee existingEmployee = employeeRepo.findByEmail(email);
+        List<Task> taskList = taskRepo.findTasksByEmployeeEmail(existingEmployee.getEmail());
+        return taskList;
     }
 
     @Override
@@ -107,11 +121,11 @@ public class EmployeeServiceImpl implements EmployeeService, UserDetailsService 
                 if (employee.getId() == null) {
                     employee.setId(existingEmployee.getId());
                 } else if (!Objects.equals(employee.getId(), existingEmployee.getId())) {
-                    log.error("Employee id must match existing employee id");
-                    throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Employee id must match existing employee id");
+                    log.error("Employee id cannot be changed");
+                    throw new BadRequest("Employee id cannot be changed");
                 } else if (employee.getEmail().isEmpty()) {
-                    log.error("Employee id must match existing employee id");
-                    throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Employee must have an email");
+                    log.error("Employee email cannot be empty");
+                    throw new BadRequest("Employee email cannot be empty");
                 }
                 try {
                     // Update existing employee's fields in one line
@@ -124,8 +138,8 @@ public class EmployeeServiceImpl implements EmployeeService, UserDetailsService 
                     throw new RuntimeException(e.getMessage());
                 }
             } else {
-                log.error("The update employee's email is already in use by someone else");
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The update employee's email is already in use by someone else");
+                log.error("The updated employee's email is already in use by someone else");
+                throw new BadRequest("The updated employee's email is already in use by someone else");
             }
         }
 

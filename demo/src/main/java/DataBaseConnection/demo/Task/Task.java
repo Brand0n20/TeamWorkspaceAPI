@@ -24,6 +24,7 @@ public class Task {
 
     @ManyToOne(cascade = {CascadeType.MERGE})  // by using OneToMany and ManyToOne, we are creating a bidirectional relationship. Meaning both classes can reference the other
     @JoinColumn(name = "employee_id")
+    @JsonIgnore
     private Employee employee;
 
 public Task(String name, String dueDate, String employeeEmail, Employee employee) {

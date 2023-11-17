@@ -75,7 +75,7 @@ public class SecurityConfig {
         http.authorizeHttpRequests(auth -> auth.requestMatchers(POST, "/employees").hasAnyAuthority("ADMIN"));
         http.authorizeHttpRequests(auth -> auth.requestMatchers("/employees").permitAll());
         http.authorizeHttpRequests(auth -> auth.requestMatchers( "/tasks/**").permitAll());
-        http.authorizeHttpRequests(auth -> auth.requestMatchers("/roles").permitAll());
+        http.authorizeHttpRequests(auth -> auth.requestMatchers("/roles").hasAnyAuthority("ADMIN"));
         http.authorizeHttpRequests(auth -> auth.requestMatchers("/signout").permitAll());
         // we're passing the authorization filter as the first filter, and we want to specify that it's for the UsernamePasswordAuthenticationFilter class
         http.addFilter(new CustomAuthenticationFilter(authenticationManager(http.getSharedObject(AuthenticationConfiguration.class)), jwtUtil, employeeRepo));

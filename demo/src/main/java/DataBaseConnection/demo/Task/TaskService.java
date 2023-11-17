@@ -12,8 +12,8 @@ public interface TaskService {
 
     Task saveTask(Task task);
 
-    Task updateTask(String email, Task task);
+    Task updateTask(Long id, Task task);
 
-    void deleteTask(String email, Long id);
+    void deleteTask(Long id);
 
 }
